@@ -26,7 +26,7 @@ router.post('/', (req, res) => {
 
     //Check existing user
     User.findOne({
-            email
+            email: email
         })
         .then(user => {
             if (!user) return res.status(400).json({
@@ -41,7 +41,7 @@ router.post('/', (req, res) => {
                     })
 
                     jwt.sign({
-                            id: user.id
+                            id: user._id
                         },
                         process.env.jwtSecret, {
                             expiresIn: 3600
@@ -50,7 +50,7 @@ router.post('/', (req, res) => {
                             if (err) throw err
                             res.status(201).json({
                                 user: {
-                                    id: user.id,
+                                    id: user._id,
                                     name: user.name,
                                     email: user.email
                                 },
@@ -67,7 +67,7 @@ router.post('/', (req, res) => {
 // @desc Get user data
 // @access private
 router.get('/user', auth, (req, res) => {
-    User.findById(req.user.id)
+    User.findById(req.user._id)
         .select('-password')
         .then(user => res.json(user))
 })
